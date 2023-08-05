@@ -1,12 +1,3 @@
 body {
 	background-color: #222;
-	border: solid red 1px;
-}
-
-canvas {
-	border: solid green 1px;
-}
-
-#fps {
-	color: white;
 }

@@ -17,7 +17,7 @@ function game() {
 
 	Game.board = {}
 	Game.board.width = 4;
-	Game.board.height = 5;
+	Game.board.height = 4;
 
 	Game.board.tiles = [];
 	Game.board.tiles.borderSize = 4; // in pixels
@@ -47,7 +47,7 @@ function game() {
 	function main(ts) {
 		Game.dt = ts - Game.pts;
 		Game.pts = ts;
-		updateFPS(Game.fps, Game.dt);
+		// updateFPS(Game.fps, Game.dt);
 		processEvents();
 		updateCanvas();
 		window.requestAnimationFrame(main);
@@ -146,15 +146,22 @@ function removeTile(tile) {
 }
 
 function moveTile(tile) {
-	if (adjacentToBlank(tile, Game.board.tiles.hiddenTile)) {
-		// move
+	let hidden = Game.board.tiles.hiddenTile;
+	if (adjacentToHidden(tile, hidden)) {
+		Game.board.tiles[hidden.row][hidden.col] = tile;
+		Game.board.tiles[tile.row][tile.col] = hidden;
+		let temp = [tile.row, tile.col];
+		tile.row = hidden.row;
+		tile.col = hidden.col;
+		hidden.row = temp[0];
+		hidden.col = temp[1];
 	}
 }
 
-function adjacentToBlank(tile, blank) {
-	if (tile.row != blank.row && tile.col != blank.col) return false;
-	return ((tile.row == blank.row + 1 || tile.row == blank.row - 1) !=
-		(tile.col == blank.col + 1 || tile.col == blank.col - 1));
+function adjacentToHidden(tile, hidden) {
+	if (tile.row != hidden.row && tile.col != hidden.col) return false;
+	return ((tile.row == hidden.row + 1 || tile.row == hidden.row - 1) !=
+		(tile.col == hidden.col + 1 || tile.col == hidden.col - 1));
 }
 
 function updateCanvas() {
@@ -181,16 +188,16 @@ function updateCanvas() {
 	}
 }
 
-function updateFPS(fps, dt) {
-	if (fps.time >= 500) {
-		document.getElementById('fps').innerText =
-			Math.round(fps.count / fps.time * 1000) + ' fps';
-		fps.count = 0;
-		fps.time = 0;
-	}
-	fps.count += 1;
-	fps.time += dt;
-}
+// function updateFPS(fps, dt) {
+// 	if (fps.time >= 500) {
+// 		document.getElementById('fps').innerText =
+// 			Math.round(fps.count / fps.time * 1000) + ' fps';
+// 		fps.count = 0;
+// 		fps.time = 0;
+// 	}
+// 	fps.count += 1;
+// 	fps.time += dt;
+// }
 
 function shuffle(ary) {
 	var i = ary.length;
